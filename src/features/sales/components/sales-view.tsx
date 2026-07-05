@@ -11,9 +11,18 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatDateShort, formatRupiah } from "@/lib/format";
+import { fitTextSizeClass } from "@/lib/fit-text";
 import { cn } from "@/lib/utils";
 import { cancelSale } from "../actions";
 import type { SaleItem } from "../queries";
+
+// Font size shrinks in steps as the value string gets longer, so amounts
+// stay on one line inside the tight 3-column grid instead of overflowing.
+const VALUE_SIZE_TIERS: ReadonlyArray<readonly [number, string]> = [
+  [9, "text-sm"],
+  [12, "text-xs"],
+];
+const VALUE_SIZE_FALLBACK = "text-[11px]";
 
 function SaleCard({ sale }: { sale: SaleItem }) {
   const router = useRouter();
@@ -60,13 +69,31 @@ function SaleCard({ sale }: { sale: SaleItem }) {
         <div className="mt-3 grid grid-cols-3 gap-2 border-t pt-3 text-center">
           <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">Modal</p>
-            <p className="break-words text-sm font-semibold">
+            <p
+              className={cn(
+                "whitespace-nowrap font-semibold",
+                fitTextSizeClass(
+                  formatRupiah(sale.totalModal),
+                  VALUE_SIZE_TIERS,
+                  VALUE_SIZE_FALLBACK,
+                ),
+              )}
+            >
               {formatRupiah(sale.totalModal)}
             </p>
           </div>
           <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">Harga jual</p>
-            <p className="break-words text-sm font-semibold">
+            <p
+              className={cn(
+                "whitespace-nowrap font-semibold",
+                fitTextSizeClass(
+                  formatRupiah(sale.salePrice),
+                  VALUE_SIZE_TIERS,
+                  VALUE_SIZE_FALLBACK,
+                ),
+              )}
+            >
               {formatRupiah(sale.salePrice)}
             </p>
           </div>
@@ -74,7 +101,12 @@ function SaleCard({ sale }: { sale: SaleItem }) {
             <p className="text-[11px] text-muted-foreground">Laba</p>
             <p
               className={cn(
-                "break-words text-sm font-bold",
+                "whitespace-nowrap font-bold",
+                fitTextSizeClass(
+                  formatRupiah(sale.laba),
+                  VALUE_SIZE_TIERS,
+                  VALUE_SIZE_FALLBACK,
+                ),
                 sale.laba >= 0 ? "text-success" : "text-destructive",
               )}
             >

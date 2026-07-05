@@ -2,22 +2,30 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { fitTextSizeClass } from "@/lib/fit-text";
 
-const valueVariants = cva(
-  "text-2xl font-bold tracking-tight leading-tight break-words",
-  {
-    variants: {
-      tone: {
-        default: "text-foreground",
-        primary: "text-primary",
-        warning: "text-warning",
-        success: "text-success",
-        danger: "text-destructive",
-      },
+// Font size shrinks in steps as the value string gets longer, so amounts
+// like "Rp 1.250.000.000" stay on one line instead of wrapping/overflowing.
+const VALUE_SIZE_TIERS: ReadonlyArray<readonly [number, string]> = [
+  [9, "text-2xl"],
+  [12, "text-xl"],
+  [14, "text-lg"],
+  [17, "text-base"],
+];
+const VALUE_SIZE_FALLBACK = "text-sm";
+
+const valueVariants = cva("font-bold tracking-tight leading-tight", {
+  variants: {
+    tone: {
+      default: "text-foreground",
+      primary: "text-primary",
+      warning: "text-warning",
+      success: "text-success",
+      danger: "text-destructive",
     },
-    defaultVariants: { tone: "default" },
   },
-);
+  defaultVariants: { tone: "default" },
+});
 
 const highlightVariants = cva("shadow-[var(--shadow-elevated)]", {
   variants: {
@@ -61,7 +69,15 @@ export function StatCard({
         <p className="truncate text-[13px] font-medium text-muted-foreground">
           {label}
         </p>
-        <p className={cn(valueVariants({ tone }), "mt-1")}>{value}</p>
+        <p
+          className={cn(
+            valueVariants({ tone }),
+            fitTextSizeClass(value, VALUE_SIZE_TIERS, VALUE_SIZE_FALLBACK),
+            "mt-1 whitespace-nowrap",
+          )}
+        >
+          {value}
+        </p>
       </div>
     </Card>
   );
