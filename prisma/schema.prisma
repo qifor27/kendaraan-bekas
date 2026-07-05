@@ -1,0 +1,79 @@
+// Kendaraan Bekas — data model
+// Money is stored as whole rupiah (Int) to avoid floating-point errors.
+// `totalModal` (purchasePrice + additionalCosts) and `labaKotor`
+// (salePrice - totalModal) are COMPUTED in app code, never stored.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VehicleStatus {
+  OWNED
+  SOLD
+}
+
+model Vehicle {
+  id            String        @id @default(cuid())
+  name          String
+  plateNumber   String?
+  purchaseDate  DateTime
+  purchasePrice Int
+  status        VehicleStatus @default(OWNED)
+
+  additionalCosts AdditionalCost[]
+  sale            Sale?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AdditionalCost {
+  id        String  @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  label  String
+  amount Int
+
+  createdAt DateTime @default(now())
+
+  @@index([vehicleId])
+}
+
+model Sale {
+  id        String  @id @default(cuid())
+  vehicleId String  @unique
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  salePrice Int
+  saleDate  DateTime
+  notes     String?
+
+  createdAt DateTime @default(now())
+}
+
+model OperationalExpense {
+  id     String   @id @default(cuid())
+  label  String
+  amount Int
+  date   DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([date])
+}
+
+// Future-proofing: single-row key/value app preferences (currency, dealer name…).
+model Settings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
