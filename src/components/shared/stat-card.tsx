@@ -3,18 +3,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const valueVariants = cva("text-2xl font-bold tracking-tight leading-tight", {
-  variants: {
-    tone: {
-      default: "text-foreground",
-      primary: "text-primary",
-      warning: "text-warning",
-      success: "text-success",
-      danger: "text-destructive",
+const valueVariants = cva(
+  "text-2xl font-bold tracking-tight leading-tight break-words",
+  {
+    variants: {
+      tone: {
+        default: "text-foreground",
+        primary: "text-primary",
+        warning: "text-warning",
+        success: "text-success",
+        danger: "text-destructive",
+      },
     },
+    defaultVariants: { tone: "default" },
   },
-  defaultVariants: { tone: "default" },
-});
+);
 
 const highlightVariants = cva("shadow-[var(--shadow-elevated)]", {
   variants: {
@@ -49,13 +52,15 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "gap-1.5 py-4",
+        "min-w-0 gap-1.5 py-4",
         highlighted && highlightVariants({ tone }),
         className,
       )}
     >
-      <div className="px-4">
-        <p className="text-[13px] font-medium text-muted-foreground">{label}</p>
+      <div className="min-w-0 px-4">
+        <p className="truncate text-[13px] font-medium text-muted-foreground">
+          {label}
+        </p>
         <p className={cn(valueVariants({ tone }), "mt-1")}>{value}</p>
       </div>
     </Card>

@@ -58,23 +58,23 @@ function SaleCard({ sale }: { sale: SaleItem }) {
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2 border-t pt-3 text-center">
-          <div>
+          <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">Modal</p>
-            <p className="text-sm font-semibold">
+            <p className="break-words text-sm font-semibold">
               {formatRupiah(sale.totalModal)}
             </p>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">Harga jual</p>
-            <p className="text-sm font-semibold">
+            <p className="break-words text-sm font-semibold">
               {formatRupiah(sale.salePrice)}
             </p>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">Laba</p>
             <p
               className={cn(
-                "text-sm font-bold",
+                "break-words text-sm font-bold",
                 sale.laba >= 0 ? "text-success" : "text-destructive",
               )}
             >
